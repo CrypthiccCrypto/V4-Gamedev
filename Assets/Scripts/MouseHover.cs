@@ -5,10 +5,18 @@ using UnityEngine;
 
 public class MouseHover : MonoBehaviour
 {
-    [SerializeField] GameObject translucentHexPrefab;
-
+    [SerializeField] MeshRenderer mesh;
     void OnMouseOver()
     {
-        Instantiate(translucentHexPrefab, transform.position, Quaternion.identity);
+        mesh.enabled = true;
+    }
+
+    void OnMouseExit()
+        {
+            mesh.enabled = false;
+        }
+
+    private void OnMouseDown() {
+        Destroy(gameObject);
     }
 }

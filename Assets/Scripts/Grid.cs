@@ -34,29 +34,39 @@ public class Grid : MonoBehaviour
 
             //Debug.Log(i1+i2+i3);
             if((i1 + i2 + i3) == 2) {   // corner hex piece
-                Instantiate(GridCornerPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]), Quaternion.identity);
+                Instantiate(GridCornerPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), Quaternion.identity);
             }
             else if((i1 + i2 + i3) == 0) {  // inner piece
-                Instantiate(GridCentrePrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]), Quaternion.identity);
+                Instantiate(GridCentrePrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), Quaternion.identity);
             }
             else {
                 if(coords[0] == grid_size - 1) {
-                    
+                    float angleDegrees = -60;
+                    Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
+                    Instantiate(GridBoundaryPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), rot); // 60
                 }
                 else if(coords[0] == -grid_size + 1) {
-
+                    float angleDegrees = 60;
+                    Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
+                    Instantiate(GridBoundaryPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), rot); //-60
                 }
                 else if(coords[1] == grid_size - 1) {
-                    
+                    float angleDegrees = 180;
+                    Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
+                    Instantiate(GridBoundaryPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), rot); //0
                 }
                 else if(coords[1] == -grid_size + 1) {
-
+                    Instantiate(GridBoundaryPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), Quaternion.identity); //180
                 }
                 else if(coords[2] == grid_size - 1) {
-                    
+                    float angleDegrees = -120;
+                    Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
+                    Instantiate(GridBoundaryPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), rot); //120
                 }
                 else if(coords[2] == -grid_size + 1) {
-
+                    float angleDegrees = 120;
+                    Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
+                    Instantiate(GridBoundaryPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), rot); //-120
                 }
             }
         }
