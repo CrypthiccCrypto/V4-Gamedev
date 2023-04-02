@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 public class Board      // only encodes the rules, does not contain an actual board
 {
     int board_size;
-    static HashSet<string> allPossibleCoordinates;
+    public static HashSet<string> allPossibleCoordinates;
 
     public static string GenerateStringFromCoordinates(int i, int j, int k) {
         string s = "";
@@ -67,14 +68,6 @@ public class Board      // only encodes the rules, does not contain an actual bo
     
     public Board(int board_size) { // create a new empty board
         this.board_size = board_size;
-        allPossibleCoordinates = new HashSet<string>();
-
-        for(int i = -board_size + 1; i <= board_size - 1; i++) {        // add all possible moves to the set
-            for(int j = -board_size + 1; j <= board_size - 1; j++) {
-                int k = -(i + j);
-                if(Math.Abs(k) <= board_size - 1) allPossibleCoordinates.Add(GenerateStringFromCoordinates(i, j, k));
-            }
-        }
     }
 
     public int PlayMove(int i, int j, int k, int move, Dictionary<string, int> board) {
@@ -154,7 +147,7 @@ public class Board      // only encodes the rules, does not contain an actual bo
 
         int player = -leaf.player;
         Dictionary<string, int> gameState = new Dictionary<string, int>(leaf.gameState);
-        Random rd = new Random();
+        System.Random rd = new System.Random();
         List<string> possibleMoves = Board.AllPossibleMoves(gameState);
 
         while(true) {

@@ -38,9 +38,9 @@ public class MCTSBestMove {
     public Node rootNode;
     public Node bestNode;
 
-    public MCTSBestMove() {
+    public MCTSBestMove(int boardsize) {
         // OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER
-        simulator = new Board(4);   
+        simulator = new Board(boardsize);   
         // OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER
 
         rootNode = null;    // set later from main

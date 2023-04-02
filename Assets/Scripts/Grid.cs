@@ -6,22 +6,61 @@ public class Grid : MonoBehaviour
 {
     [SerializeField] GameObject playerHexPrefab;
     [SerializeField] GameObject AIHexPrefab;
-    [SerializeField] int grid_size;
+    [SerializeField] GameObject GridCornerPrefab;
+    [SerializeField] GameObject GridBoundaryPrefab;
+    [SerializeField] GameObject GridCentrePrefab;
+    GameManager gameManager;
     [SerializeField] public static float inter_center_distance = 3.8f;
     private float y_factor = Mathf.Sqrt(3)/2;
 
     void Start() {
-        // CreateGrid(grid_size);
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        CreateGrid(gameManager.Getboard_size());
+        
     }   
 
-    // void CreateGrid(int grid_size) {
-    //     for(int row = -grid_size + 1; row <= grid_size - 1; row++) {
-    //         for(float i = -grid_size + 1 + Mathf.Abs(row)/2.0f; i <= grid_size - 1 - Mathf.Abs(row)/2.0f; i++) {
-    //             Debug.Log(i + " " + row);
-    //             Instantiate(hexPrefab, new Vector3(i * inter_center_distance, 0, y_factor* row * inter_center_distance), Quaternion.identity);
-    //         }
-    //     }
-    // }
+    void CreateGrid(int grid_size) {
+        Debug.Log(Board.allPossibleCoordinates.Count);
+        foreach(string s in Board.allPossibleCoordinates)
+        {
+            List<int> coords = Board.GenerateCoordinatesFromString(s);
+            bool b1 = ((int)Mathf.Abs(coords[0]) == grid_size - 1);
+            bool b2 = ((int)Mathf.Abs(coords[1]) == grid_size - 1);
+            bool b3 = ((int)Mathf.Abs(coords[2]) == grid_size - 1);
+
+            int i1 = b1 ? 1 : 0;
+            int i2 = b2 ? 1 : 0;
+            int i3 = b3 ? 1 : 0;            
+
+            //Debug.Log(i1+i2+i3);
+            if((i1 + i2 + i3) == 2) {   // corner hex piece
+                Instantiate(GridCornerPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]), Quaternion.identity);
+            }
+            else if((i1 + i2 + i3) == 0) {  // inner piece
+                Instantiate(GridCentrePrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]), Quaternion.identity);
+            }
+            else {
+                if(coords[0] == grid_size - 1) {
+                    
+                }
+                else if(coords[0] == -grid_size + 1) {
+
+                }
+                else if(coords[1] == grid_size - 1) {
+                    
+                }
+                else if(coords[1] == -grid_size + 1) {
+
+                }
+                else if(coords[2] == grid_size - 1) {
+                    
+                }
+                else if(coords[2] == -grid_size + 1) {
+
+                }
+            }
+        }
+    }
 
     public void PlaceTile(int x, int y, int z, int player) {
         if(player == (int)TURN.PLAYER_TURN) {

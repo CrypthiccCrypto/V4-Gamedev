@@ -7,7 +7,7 @@ public class LevelMainMenu : MonoBehaviour
 {
     public void Level1()
     {
-        // SceneManager.LoadScene(1);
+        SceneManager.LoadScene(3);
     }
     public void Level2()
     {

@@ -49,7 +49,9 @@ public class Player : MonoBehaviour
                 
                 Vector3 cubicCoordinates = Grid.WorldToGridCoordinates(hitInfo.point);
                 if(gameManager.GetTurn() == (int)TURN.PLAYER_TURN) {
-                    gameManager.UpdateGame((int)cubicCoordinates.x, (int)cubicCoordinates.y, (int)cubicCoordinates.z);
+                    if(Mathf.Abs(cubicCoordinates.x) < gameManager.board_size && Mathf.Abs(cubicCoordinates.y) < gameManager.board_size && Mathf.Abs(cubicCoordinates.z) < gameManager.board_size){
+                        gameManager.UpdateGame((int)cubicCoordinates.x, (int)cubicCoordinates.y, (int)cubicCoordinates.z);
+                    }
                 }
             }
         }
