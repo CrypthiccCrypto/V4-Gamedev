@@ -6,9 +6,16 @@ using UnityEngine;
 public class MouseHover : MonoBehaviour
 {
     [SerializeField] MeshRenderer mesh;
+    GameManager gameManager;
+
+    void Start()
+    {
+                gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+
+    }
     void OnMouseOver()
     {
-        mesh.enabled = true;
+        if(gameManager.GetTurn() != (int)TURN.NO_TURN) mesh.enabled = true;
     }
 
     void OnMouseExit()

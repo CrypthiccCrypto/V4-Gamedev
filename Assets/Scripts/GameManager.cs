@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 
 public enum TURN {
     PLAYER_TURN = 1,
-    AI_TURN = -1
+    AI_TURN = -1,
+    NO_TURN = 0 // game end
 }
 
 public enum DIFFICULTY {
@@ -18,6 +19,10 @@ public enum DIFFICULTY {
 public class GameManager : MonoBehaviour {
     public static GameManager instance;
     public int board_size = 5;
+
+    public GameObject pauseMenu;
+    public GameObject WonUI;
+    public GameObject LoseUI;
     public Dictionary<string, int> board;
     public Grid grid;
     public Game game;
@@ -25,6 +30,9 @@ public class GameManager : MonoBehaviour {
     public const int applyMCTSLimit = 10000;
     private MCTSBestMove AI;
     [SerializeField] private int turn;
+    private bool gameStarted = false;
+
+    int currTurn;
 
     void Awake() {
         if(instance == null) {
@@ -37,6 +45,16 @@ public class GameManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
+    void Update()
+    {
+        if(gameStarted && Input.GetButtonDown("Cancel"))
+        {
+            currTurn = turn;
+            turn = (int)TURN.NO_TURN;
+            pauseMenu.SetActive(true);
+        }
+    }
+
     void OnEnable() {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -45,10 +63,11 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-        Debug.Log(scene.name);
+        gameStarted = false;
 
         if(!string.Equals(scene.name, "GameScene")) return;
 
+        gameStarted = true;
         game = new Game(board_size);
         AI = new MCTSBestMove(board_size);
 
@@ -62,7 +81,11 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
+
         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
+        pauseMenu = GameObject.Find("Canvas").transform.GetChild(1).gameObject;
+        WonUI = GameObject.Find("Canvas").transform.GetChild(2).gameObject;
+        LoseUI = GameObject.Find("Canvas").transform.GetChild(3).gameObject;
 
         SwitchTurn();   // Set the game into motion
     }   
@@ -81,16 +104,19 @@ public class GameManager : MonoBehaviour {
             
 
             if(result == (int)TURN.PLAYER_TURN) {
-                Debug.Log("Player Won!");
+                WonUI.SetActive(true);
+                turn = (int)TURN.NO_TURN;
             }
             else if(result == (int)TURN.AI_TURN) {
-                Debug.Log("AI Won!");
+                LoseUI.SetActive(true);
+                turn = (int)TURN.NO_TURN;
             }
             else if(result == 2) {
-                Debug.Log("Draw!");
+                turn = (int)TURN.NO_TURN;
             }
-
-            SwitchTurn();
+            else {
+                SwitchTurn();
+            }
         }
     }
 
@@ -121,24 +147,21 @@ public class GameManager : MonoBehaviour {
         float f = UnityEngine.Random.Range(0f, 1f);
         switch(difficulty) {
             case DIFFICULTY.EASY:
-            if(f <= 0.9) {
-                return 1;
+            if(f <= 0.5) {
+                return 0;
             }
             else {
-                return 2;
+                return 1;
             }
             case DIFFICULTY.MEDIUM:
-            if(f <= 0.3) {
+            if(f <= 0.6) {
                 return 1;
             }
-            else if(f <= 0.6) {
+            else if(f <= 0.9) {
                 return 2;
             }
-            else if(f <= 0.9){
-                return 3;
-            }
             else {
-                return 4;
+                return 3;
             }
 
             case DIFFICULTY.HARD:
@@ -173,5 +196,11 @@ public class GameManager : MonoBehaviour {
 
     public void SetTurn(int turn) {
         this.turn = turn;
+    }
+
+    public void Continue()
+    {
+        turn = currTurn;
+        pauseMenu.SetActive(false);
     }
 }

@@ -77,7 +77,7 @@ public class Grid : MonoBehaviour
         if(player == (int)TURN.PLAYER_TURN) {
             Instantiate(playerHexPrefab[randomIndex], Grid.GridToWorldCoordinates(x, y, z), Quaternion.identity);
         }
-        else {
+        else if(player == (int)TURN.AI_TURN){
             Instantiate(AIHexPrefab[randomIndex], Grid.GridToWorldCoordinates(x, y, z), Quaternion.identity);
         }
     }
