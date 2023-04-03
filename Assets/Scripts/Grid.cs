@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    [SerializeField] GameObject playerHexPrefab;
-    [SerializeField] GameObject AIHexPrefab;
+    [SerializeField] GameObject[] playerHexPrefab;
+    [SerializeField] GameObject[] AIHexPrefab;
     [SerializeField] GameObject GridCornerPrefab;
     [SerializeField] GameObject GridBoundaryPrefab;
     [SerializeField] GameObject GridCentrePrefab;
@@ -71,11 +71,14 @@ public class Grid : MonoBehaviour
     }
 
     public void PlaceTile(int x, int y, int z, int player) {
+
+        int randomIndex = UnityEngine.Random.Range(0,4);
+
         if(player == (int)TURN.PLAYER_TURN) {
-            Instantiate(playerHexPrefab, Grid.GridToWorldCoordinates(x, y, z), Quaternion.identity);
+            Instantiate(playerHexPrefab[randomIndex], Grid.GridToWorldCoordinates(x, y, z), Quaternion.identity);
         }
         else {
-            Instantiate(AIHexPrefab, Grid.GridToWorldCoordinates(x, y, z), Quaternion.identity);
+            Instantiate(AIHexPrefab[randomIndex], Grid.GridToWorldCoordinates(x, y, z), Quaternion.identity);
         }
     }
 
