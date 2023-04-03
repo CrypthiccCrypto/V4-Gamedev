@@ -63,6 +63,8 @@ public class GameManager : MonoBehaviour {
             }
         }
         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
+
+        SwitchTurn();   // Set the game into motion
     }   
 
     public void UpdateGame(int x, int y, int z) {
@@ -167,5 +169,9 @@ public class GameManager : MonoBehaviour {
 
     public void SetBoardSize(int board_size) {
         this.board_size = board_size;
+    }
+
+    public void SetTurn(int turn) {
+        this.turn = turn;
     }
 }
