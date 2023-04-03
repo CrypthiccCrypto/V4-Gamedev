@@ -2,22 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
- public enum TURN {
-        PLAYER_TURN = 1,
-        AI_TURN = -1
+public enum TURN {
+    PLAYER_TURN = 1,
+    AI_TURN = -1
+}
+
+public enum DIFFICULTY {
+    EASY = 1,
+    MEDIUM = 2,
+    HARD = 3
 }
 
 public class GameManager : MonoBehaviour {
-    public int board_size;
+    public static GameManager instance;
+    public int board_size = 5;
     public Dictionary<string, int> board;
     public Grid grid;
     public Game game;
+    [SerializeField] public DIFFICULTY difficulty;
     public const int applyMCTSLimit = 10000;
     private MCTSBestMove AI;
     [SerializeField] private int turn;
 
     void Awake() {
+        if(instance == null) {
+            instance = this;
+        }
+        else {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    void OnEnable() {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable() {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        Debug.Log(scene.name);
+
+        if(!string.Equals(scene.name, "GameScene")) return;
+
         game = new Game(board_size);
         AI = new MCTSBestMove(board_size);
 
@@ -31,9 +62,10 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-
         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
-    }
+
+        SwitchTurn();   // Set the game into motion
+    }   
 
     public void UpdateGame(int x, int y, int z) {
         int idx = game.CubicToIndex(x, y, z);
@@ -70,7 +102,8 @@ public class GameManager : MonoBehaviour {
             int[] coords = null;
 
             if(game.plays < applyMCTSLimit) {   // minimax logic, only logic used for now
-                AI.MiniMax(turn, true, 2, -2, 0);
+                int depth = GetDepth();
+                AI.MiniMax(turn, true, 2, -2, depth);
                 coords = game.IndexToCubic(AI.best_minimax_move);
             }
             else {
@@ -84,11 +117,61 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    public int GetDepth() {
+        float f = UnityEngine.Random.Range(0f, 1f);
+        switch(difficulty) {
+            case DIFFICULTY.EASY:
+            if(f <= 0.9) {
+                return 1;
+            }
+            else {
+                return 2;
+            }
+            case DIFFICULTY.MEDIUM:
+            if(f <= 0.3) {
+                return 1;
+            }
+            else if(f <= 0.6) {
+                return 2;
+            }
+            else if(f <= 0.9){
+                return 3;
+            }
+            else {
+                return 4;
+            }
+
+            case DIFFICULTY.HARD:
+            if(f <= 0.3) {
+                return 3;
+            }
+            else if(f <= 0.8) { 
+                return 4;
+            }
+            else {
+                return 5;
+            }
+        }
+        return 0;
+    }
+
     public int GetTurn() {
         return turn;
     }
 
-    public int Getboard_size() {
+    public int GetBoardSize() {
         return board_size;
+    }
+
+    public void SetDifficulty(DIFFICULTY difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public void SetBoardSize(int board_size) {
+        this.board_size = board_size;
+    }
+
+    public void SetTurn(int turn) {
+        this.turn = turn;
     }
 }
