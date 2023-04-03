@@ -7,21 +7,24 @@ public class MouseHover : MonoBehaviour
 {
     [SerializeField] MeshRenderer mesh;
     GameManager gameManager;
+    bool gameManagerSet = false;
 
     void Start()
     {
-                gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        gameManagerSet = true;
     }
     void OnMouseOver()
-    {
-        if(gameManager.GetTurn() != (int)TURN.NO_TURN) mesh.enabled = true;
+    {   
+        if(gameManagerSet) {
+            if(gameManager.GetTurn() != (int)TURN.NO_TURN) mesh.enabled = true;
+        }
     }
 
     void OnMouseExit()
-        {
-            mesh.enabled = false;
-        }
+    {
+        mesh.enabled = false;
+    }
 
     private void OnMouseDown() {
         Destroy(gameObject);

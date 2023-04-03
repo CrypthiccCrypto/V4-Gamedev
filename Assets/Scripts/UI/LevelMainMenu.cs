@@ -8,21 +8,20 @@ public class LevelMainMenu : MonoBehaviour
 {
     public Slider slider;
     public Text text;
-    int turn = -1;
+    bool aiFirst = true;
     public GameManager gameManager;
 
     void Start() {
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         slider.value = gameManager.GetBoardSize();
 
-        text.text = turn == -1 ? "Player First" : "AI First";
-        gameManager.SetTurn(turn);
+        text.text = aiFirst ? "AI First" : "Player First";
+        gameManager.SetAiFirst(aiFirst);
     }
     public void Swap() {
-        turn = -turn;
-        text.text = (turn == -1) ? "Player First" : "AI First";
-        Debug.Log(text.text);
-        gameManager.SetTurn(turn);
+        aiFirst = !aiFirst;
+        text.text = aiFirst ? "AI First" : "Player First";
+        gameManager.SetAiFirst(aiFirst);
     }
 
     public void Next() {

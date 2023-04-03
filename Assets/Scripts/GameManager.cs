@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] public DIFFICULTY difficulty;
     public const int applyMCTSLimit = 10000;
     private MCTSBestMove AI;
+    private bool aiFirst;
     [SerializeField] private int turn;
     private bool gameStarted = false;
 
@@ -86,6 +87,13 @@ public class GameManager : MonoBehaviour {
         pauseMenu = GameObject.Find("Canvas").transform.GetChild(1).gameObject;
         WonUI = GameObject.Find("Canvas").transform.GetChild(2).gameObject;
         LoseUI = GameObject.Find("Canvas").transform.GetChild(3).gameObject;
+
+        if(aiFirst) {
+            turn = (int)TURN.PLAYER_TURN;
+        }
+        else {
+            turn = (int)TURN.AI_TURN;
+        }
 
         SwitchTurn();   // Set the game into motion
     }   
@@ -165,15 +173,7 @@ public class GameManager : MonoBehaviour {
             }
 
             case DIFFICULTY.HARD:
-            if(f <= 0.3) {
-                return 3;
-            }
-            else if(f <= 0.8) { 
-                return 4;
-            }
-            else {
-                return 5;
-            }
+            return 4;
         }
         return 0;
     }
@@ -194,8 +194,8 @@ public class GameManager : MonoBehaviour {
         this.board_size = board_size;
     }
 
-    public void SetTurn(int turn) {
-        this.turn = turn;
+    public void SetAiFirst(bool aiFirst) {
+        this.aiFirst = aiFirst;
     }
 
     public void Continue()
