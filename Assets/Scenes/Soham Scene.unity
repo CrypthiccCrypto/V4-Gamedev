@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028328, g: 0.22571328, b: 0.3069218, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -168,6 +168,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df6f36c7f17ac754799c8933781c38ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerHexPrefab: {fileID: 9059186120661796137, guid: 669f1a28e57684c4988a3ea5aac65cb8,
+    type: 3}
+  AIHexPrefab: {fileID: 9059186120661796137, guid: 6b0f79723c7006847b1451ffd1b8232b,
+    type: 3}
+  GridCornerPrefab: {fileID: 7001471629341917066, guid: f9c18ba46ab0c7bcb948b1c39b8239f1,
+    type: 3}
+  GridBoundaryPrefab: {fileID: 823065063433525470, guid: 2ad8aad7d9e1e147eb99a512c06d6af9,
+    type: 3}
+  GridCentrePrefab: {fileID: 8961402705194322689, guid: 1851693e84951053ab3f98ffd8d6a3c1,
+    type: 3}
 --- !u!1 &206347812
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,6 +207,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa66f8668ef4d994ab52441bfaee235d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  board_size: 0
+  grid: {fileID: 0}
+  turn: 0
 --- !u!4 &206347814
 Transform:
   m_ObjectHideFlags: 0
@@ -457,6 +470,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cd61d9263a3d214d9f7293de2d86f16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 0}
+  planeLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  grid: {fileID: 0}
 --- !u!4 &902000810
 Transform:
   m_ObjectHideFlags: 0
