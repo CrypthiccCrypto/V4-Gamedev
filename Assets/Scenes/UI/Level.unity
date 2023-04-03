@@ -615,7 +615,7 @@ GameObject:
   - component: {fileID: 912400294}
   - component: {fileID: 912400295}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: LevelSelect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -695,8 +695,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 1718112125}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: 
         m_Mode: 1
         m_Arguments:
@@ -754,6 +754,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e37cb0342b7f7da4c8b2c539b3447b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 912400295}
+  gameManager: {fileID: 0}
 --- !u!1001 &1222888272
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1042,7 +1044,7 @@ PrefabInstance:
     - target: {fileID: 251264906382309150, guid: b7c158541d0b9af44be175bf0c087157,
         type: 3}
       propertyPath: m_Text
-      value: NEXT
+      value: Ready
       objectReference: {fileID: 0}
     - target: {fileID: 251264906382309150, guid: b7c158541d0b9af44be175bf0c087157,
         type: 3}
@@ -1188,7 +1190,7 @@ PrefabInstance:
     - target: {fileID: 4080852878387782617, guid: b7c158541d0b9af44be175bf0c087157,
         type: 3}
       propertyPath: m_Name
-      value: HorizontalNextButton
+      value: HorizontalReadyButton
       objectReference: {fileID: 0}
     - target: {fileID: 4080852878387782618, guid: b7c158541d0b9af44be175bf0c087157,
         type: 3}

@@ -5,17 +5,21 @@ using UnityEngine.SceneManagement;
 
 public class AI_MainMenu : MonoBehaviour
 {
+    GameManager gameManager;
+    void Start() {
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+    }
     public void Easy()
     {
-        // SceneManager.LoadScene(1);
+        gameManager.SetDifficulty(DIFFICULTY.EASY);
     }
     public void Medium()
     {
-        // SceneManager.LoadScene(1);
+        gameManager.SetDifficulty(DIFFICULTY.MEDIUM);
     }
     public void Hard()
     {
-        // SceneManager.LoadScene(1);
+        gameManager.SetDifficulty(DIFFICULTY.HARD);
     }
     public void Back()
     {

@@ -15,7 +15,7 @@ public class Grid : MonoBehaviour
 
     void Start() {
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        CreateGrid(gameManager.Getboard_size());
+        CreateGrid(gameManager.GetBoardSize());
         
     }   
 

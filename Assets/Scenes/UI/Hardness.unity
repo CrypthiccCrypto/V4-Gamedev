@@ -853,7 +853,7 @@ PrefabInstance:
     - target: {fileID: 2221953267560834577, guid: a98e38a09ea5a684fbe07e70cd65fa96,
         type: 3}
       propertyPath: m_Name
-      value: VerticalOrangeButton
+      value: Easy
       objectReference: {fileID: 0}
     - target: {fileID: 8324160754942202934, guid: a98e38a09ea5a684fbe07e70cd65fa96,
         type: 3}
@@ -1068,7 +1068,7 @@ PrefabInstance:
     - target: {fileID: 9100150734294844958, guid: 452f2e8b7e5708f4e9551a097c23f3f2,
         type: 3}
       propertyPath: m_Name
-      value: VerticalBlueButton
+      value: Medium
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 452f2e8b7e5708f4e9551a097c23f3f2, type: 3}
@@ -1261,7 +1261,7 @@ PrefabInstance:
     - target: {fileID: 1973184848206216426, guid: 44373c1366e91194fbd516b802b0337f,
         type: 3}
       propertyPath: m_Name
-      value: VerticalGreenButton
+      value: Hard
       objectReference: {fileID: 0}
     - target: {fileID: 2255262600124502878, guid: 44373c1366e91194fbd516b802b0337f,
         type: 3}
@@ -1448,7 +1448,7 @@ PrefabInstance:
     - target: {fileID: 4080852878387782617, guid: b7c158541d0b9af44be175bf0c087157,
         type: 3}
       propertyPath: m_Name
-      value: HorizontalBlackButton
+      value: Back
       objectReference: {fileID: 0}
     - target: {fileID: 4080852878387782618, guid: b7c158541d0b9af44be175bf0c087157,
         type: 3}
