@@ -24,6 +24,7 @@ MonoBehaviour:
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 0
+  m_Maximized: 0
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -37,7 +38,6 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier:
   m_Children:
-  - {fileID: 9}
   - {fileID: 3}
   m_Position:
     serializedVersion: 2
@@ -272,7 +272,7 @@ MonoBehaviour:
   - {fileID: 15}
   - {fileID: 16}
   m_Selected: 0
-  m_LastSelected: 1
+  m_LastSelected: 0
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -538,7 +538,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_Position:
     m_Target: {x: 0, y: 0, z: 0}
+    m_Target: {x: 0, y: 0, z: 0}
     speed: 2
+    m_Value: {x: 0, y: 0, z: 0}
     m_Value: {x: 0, y: 0, z: 0}
   m_RenderMode: 0
   m_CameraMode:
@@ -586,11 +588,15 @@ MonoBehaviour:
     m_gridOpacity: 0.5
   m_Rotation:
     m_Target: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+    m_Target: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
     speed: 2
+    m_Value: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
     m_Value: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
   m_Size:
     m_Target: 10
+    m_Target: 10
     speed: 2
+    m_Value: 10
     m_Value: 10
   m_Ortho:
     m_Target: 0
@@ -599,7 +605,7 @@ MonoBehaviour:
   m_CameraSettings:
     m_Speed: 1
     m_SpeedNormalized: 0.5
-    m_SpeedMin: 0.001
+    m_SpeedMin: 0.01
     m_SpeedMax: 2
     m_EasingEnabled: 1
     m_EasingDuration: 0.4
