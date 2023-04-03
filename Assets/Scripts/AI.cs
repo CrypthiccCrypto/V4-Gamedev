@@ -126,8 +126,8 @@ public class MCTSBestMove {
         }
     }
 
-    public int MiniMax(int turn, bool root, int beta, int alpha, int depth) {
-        if(depth >= max_depth) { return 0; }
+    public int MiniMax(int turn, bool root, int beta, int alpha, int height) {
+        if(height < 0) { return 0; }
         bool max_node = (turn == (int)TURN.PLAYER_TURN);    // Player is MAXNODE, AI is MINNODE
 
         int best_score = max_node ? Int32.MinValue : Int32.MaxValue;
@@ -152,7 +152,7 @@ public class MCTSBestMove {
                     }
                 }
             } else {
-                result = MiniMax(-turn, false, beta, alpha, depth + 1);
+                result = MiniMax(-turn, false, beta, alpha, height - 1);
                 simulator.UnplayMove(coords[0], coords[1], coords[2], turn);
             }
 

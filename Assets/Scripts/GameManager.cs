@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour {
     public Dictionary<string, int> board;
     public Grid grid;
     public Game game;
-    [SerializeField] DIFFICULTY difficulty;
+    [SerializeField] public DIFFICULTY difficulty;
     public const int applyMCTSLimit = 10000;
     private MCTSBestMove AI;
     [SerializeField] private int turn;
@@ -36,26 +36,6 @@ public class GameManager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
     }
-    // void Start() {
-    //     Scene scene = SceneManager.GetActiveScene();
-    //     Debug.Log(scene.name);
-    //     if(scene.name == "GameScene") {
-    //         game = new Game(board_size);
-    //         AI = new MCTSBestMove(board_size);
-
-    //         Board.allPossibleIndices = new HashSet<int>();
-
-    //         for(int i = -board_size + 1; i <= board_size - 1; i++) {        // add all possible moves to the set
-    //             for(int j = -board_size + 1; j <= board_size - 1; j++) {
-    //                 int k = -(i + j);
-    //                 if(Math.Abs(k) <= board_size - 1) {
-    //                     Board.allPossibleIndices.Add(game.CubicToIndex(i, j, k));
-    //                 }
-    //             }
-    //         }
-    //         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
-    //     }
-    // }
 
     void OnEnable() {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -120,7 +100,8 @@ public class GameManager : MonoBehaviour {
             int[] coords = null;
 
             if(game.plays < applyMCTSLimit) {   // minimax logic, only logic used for now
-                AI.MiniMax(turn, true, 2, -2, 0);
+                int depth = GetDepth();
+                AI.MiniMax(turn, true, 2, -2, depth);
                 coords = game.IndexToCubic(AI.best_minimax_move);
             }
             else {
@@ -132,6 +113,44 @@ public class GameManager : MonoBehaviour {
 
             UpdateGame(coords[0], coords[1], coords[2]);
         }
+    }
+
+    public int GetDepth() {
+        float f = UnityEngine.Random.Range(0f, 1f);
+        switch(difficulty) {
+            case DIFFICULTY.EASY:
+            if(f <= 0.9) {
+                return 1;
+            }
+            else {
+                return 2;
+            }
+            case DIFFICULTY.MEDIUM:
+            if(f <= 0.3) {
+                return 1;
+            }
+            else if(f <= 0.6) {
+                return 2;
+            }
+            else if(f <= 0.9){
+                return 3;
+            }
+            else {
+                return 4;
+            }
+
+            case DIFFICULTY.HARD:
+            if(f <= 0.3) {
+                return 3;
+            }
+            else if(f <= 0.8) { 
+                return 4;
+            }
+            else {
+                return 5;
+            }
+        }
+        return 0;
     }
 
     public int GetTurn() {

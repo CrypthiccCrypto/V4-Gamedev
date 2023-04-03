@@ -101,13 +101,20 @@ public static class Board      // only encodes the rules, does not contain an ac
         return num_consec;
     }
 
-    public static List<int> AllPossibleMoves(Game game) {
+    public static List<int> AllPossibleMoves(Game game) {       // returns a shuffled list of all possible moves remaining 
         List<int> possibleMoves = new List<int>();
 
         foreach(int idx in allPossibleIndices) {
             if(game.board[0, idx] || game.board[1, idx]) continue;
 
             possibleMoves.Add(idx);
+        }
+
+        for(int i = 0; i < possibleMoves.Count; i++) {
+            int tmp = possibleMoves[i];
+            int randomIndex = UnityEngine.Random.Range(i, possibleMoves.Count);
+            possibleMoves[i] = possibleMoves[randomIndex];
+            possibleMoves[randomIndex] = tmp;
         }
 
         return possibleMoves;
