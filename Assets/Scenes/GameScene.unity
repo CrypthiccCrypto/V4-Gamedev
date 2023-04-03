@@ -168,10 +168,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df6f36c7f17ac754799c8933781c38ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHexPrefab: {fileID: 9059186120661796137, guid: 669f1a28e57684c4988a3ea5aac65cb8,
-    type: 3}
-  AIHexPrefab: {fileID: 9059186120661796137, guid: 6b0f79723c7006847b1451ffd1b8232b,
-    type: 3}
+  playerHexPrefab:
+  - {fileID: 8829277690102242101, guid: 6b3e2107e19e0069a891ae1d87c73f07, type: 3}
+  - {fileID: 5838091517007725825, guid: f89962eea37d16e899b877f2cd1d9897, type: 3}
+  - {fileID: 6951599640447391344, guid: 4da9cc2210a9ec65da72695263d42200, type: 3}
+  - {fileID: 4620435921100665100, guid: 18a2fc7be77239c76b434a75329b43c6, type: 3}
+  AIHexPrefab:
+  - {fileID: 6693456672770859489, guid: c04d4d63450dedd89ad8e17c84b51d45, type: 3}
+  - {fileID: 6589835138270646288, guid: 37163c61241f03b70a7ae61a0f6fca16, type: 3}
+  - {fileID: 1379151883720423607, guid: 6aa0c8f2b15dc20a08243d2aa7b6f8fc, type: 3}
+  - {fileID: 4751278142811401096, guid: 280995ececbd8f0a2bf9504d8986c8bb, type: 3}
   GridCornerPrefab: {fileID: 7001471629341917066, guid: f9c18ba46ab0c7bcb948b1c39b8239f1,
     type: 3}
   GridBoundaryPrefab: {fileID: 823065063433525470, guid: 2ad8aad7d9e1e147eb99a512c06d6af9,
@@ -920,6 +926,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Game Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 2701927919924093563, guid: 167fbe486960d444a95bb6e566c0ffaa,
+        type: 3}
+      propertyPath: turn
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2701927919924093563, guid: 167fbe486960d444a95bb6e566c0ffaa,
+        type: 3}
+      propertyPath: board_size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2701927919924093563, guid: 167fbe486960d444a95bb6e566c0ffaa,
+        type: 3}
+      propertyPath: difficulty
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 167fbe486960d444a95bb6e566c0ffaa, type: 3}
