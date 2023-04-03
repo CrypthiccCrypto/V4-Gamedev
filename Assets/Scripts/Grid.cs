@@ -20,10 +20,9 @@ public class Grid : MonoBehaviour
     }   
 
     void CreateGrid(int grid_size) {
-        Debug.Log(Board.allPossibleCoordinates.Count);
-        foreach(string s in Board.allPossibleCoordinates)
+        foreach(int idx in Board.allPossibleIndices)
         {
-            List<int> coords = Board.GenerateCoordinatesFromString(s);
+            int[] coords = gameManager.game.IndexToCubic(idx);
             bool b1 = ((int)Mathf.Abs(coords[0]) == grid_size - 1);
             bool b2 = ((int)Mathf.Abs(coords[1]) == grid_size - 1);
             bool b3 = ((int)Mathf.Abs(coords[2]) == grid_size - 1);
@@ -32,14 +31,13 @@ public class Grid : MonoBehaviour
             int i2 = b2 ? 1 : 0;
             int i3 = b3 ? 1 : 0;            
 
-            //Debug.Log(i1+i2+i3);
             if((i1 + i2 + i3) == 2) {   // corner hex piece
                 Instantiate(GridCornerPrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), Quaternion.identity);
             }
             else if((i1 + i2 + i3) == 0) {  // inner piece
                 Instantiate(GridCentrePrefab, Grid.GridToWorldCoordinates(coords[0], coords[1], coords[2]) - new Vector3(0, 1, 0), Quaternion.identity);
             }
-            else {
+            else {                          // edge hex piece
                 if(coords[0] == grid_size - 1) {
                     float angleDegrees = -60;
                     Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);

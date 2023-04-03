@@ -3,161 +3,113 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class Board      // only encodes the rules, does not contain an actual board
+
+public class Game
 {
-    int board_size;
-    public static HashSet<string> allPossibleCoordinates;
+    public int plays;
+    public int board_size;
+    public bool [,] board;
 
-    public static string GenerateStringFromCoordinates(int i, int j, int k) {
-        string s = "";
-        s += i >= 0 ? "+" + i : i;
-        s += j >= 0 ? "+" + j : j;
-        s += k >= 0 ? "+" + k : k;
-
-        return s;
-    }
-
-    public static List<int> GenerateCoordinatesFromString(string s) {
-        int i=0,a=0,b=0,c=0;
-        char[] c_arr = s.ToCharArray();
-        
-        foreach(char ch in c_arr){
-            if(ch == '-' || ch == '+'){
-                if(a==0) a++;
-                else if(a==1){
-                    a++;
-                    b=i;
-                }else{
-                    c=i;
-                }
-            }
-            i++;
-        }
-        string a1 = s.Substring(c+1);
-        string a2 = s.Substring(b+1, c-(b+1));
-        string a3 = s.Substring(1, b-1);
-
-        
-        List<int> list = new List<int>(); 
-        list.Add(int.Parse(a3));  
-        list.Add(int.Parse(a2)); 
-        list.Add(int.Parse(a1));
-
-        if(s[0]=='-') list[0]= -list[0];
-        if(s[b]=='-') list[1]= -list[1];
-        if(s[c]=='-') list[2]= -list[2];
-        
-        // Console.WriteLine(list[0] + " " + list[1] + " " + list[2]);
-        
-        return list;
-    }
-
-    public static List<string> AllPossibleMoves(Dictionary<string, int> gameState) {
-        List<string> possibleMoves = new List<string>();
-        // Console.WriteLine("__________________________________");
-        foreach(string s in allPossibleCoordinates) {
-            if(!gameState.ContainsKey(s)) {
-                possibleMoves.Add(s);
-                // Console.WriteLine(s);
-            }
-        }
-        // Console.WriteLine("__________________________________");
-
-        return possibleMoves;
-    }
-    
-    public Board(int board_size) { // create a new empty board
+    public Game(int board_size) {
         this.board_size = board_size;
+        board = new bool[2, 8 * board_size * board_size * board_size + 4 * board_size * board_size + 3 * board_size];
+        this.plays = 0;
     }
 
-    public int PlayMove(int i, int j, int k, int move, Dictionary<string, int> board) {
-        string s = Board.GenerateStringFromCoordinates(i, j, k);
-        board.Add(s, move);
-
-        return CheckBoard(i, j, k, move, board);
-    }
-
-    public void UnplayMove(int i, int j, int k, Dictionary<string, int> board) {
-        string move = Board.GenerateStringFromCoordinates(i, j, k);
-
-        if(board.ContainsKey(move)) {
-            board.Remove(move);
+    public int CubicToIndex(int i, int j, int k) {
+        int tmp = 2*board_size - 1;
+        if(Math.Abs(i) >= board_size || Math.Abs(j) >= board_size || Math.Abs(k) >= board_size) {
+            return board.GetLength(1) - 1;
         }
-        else {
-            Console.WriteLine("Unknown Error! Trying to remove unplayed move");
-        }
+        return (i+board_size - 1)*tmp*tmp +(j+board_size - 1)*tmp + (k+board_size - 1);
     }
 
-    public int CheckBoard(int i, int j, int k, int move, Dictionary<string, int> board) {         
-        int dir1 = CheckConsecutive(i, j, k, 0, 1, -1, move, board);
-        int dir2 = CheckConsecutive(i, j, k, 1, -1, 0, move, board);
-        int dir3 = CheckConsecutive(i, j, k, 1, 0, -1, move, board);
+    public int[] IndexToCubic(int idx) {
+        int tmp = 2*board_size - 1;
+        int k = (idx % tmp) - board_size + 1;
+        idx /= tmp;
+        int j = (idx % tmp) - board_size + 1;
+        idx /= tmp;
+        int i = idx - board_size + 1;
 
-        if(dir1 >= 4 || dir2 >= 4 || dir3 >= 4) return move;        // win
-        else if(dir1 == 3 || dir2 == 3 || dir3 == 3) return -move;  // lose
-        else if(board.Count == 3*board_size*board_size - 3*board_size + 1) {
-            return 2;                                               // draw is assigned value 2     // optimize this
-        }
-        else return 0;                                              // neither
+        int[] coords = {i, j, k};
+        return coords;
     }
 
-    public int CheckConsecutive(int i, int j, int k, int dir_x, int dir_y, int dir_z, int move, Dictionary<string, int> board) {
+    public void PlayMove(int i, int j, int k, int player) {
+        int idx = CubicToIndex(i, j, k);
+        board[((player + 1) >> 1), idx] = true;
+        plays += 1;
+    }
+
+    public void UnplayMove(int i, int j, int k, int player) {
+        int idx = CubicToIndex(i, j, k);
+        board[((player + 1) >> 1), idx] = false;
+        plays -= 1;
+    }
+
+    public bool Draw() {
+        return plays == (3*board_size*board_size - 3*board_size + 1);
+    }
+}
+
+public static class Board      // only encodes the rules, does not contain an actual board
+{
+    public static HashSet<int> allPossibleIndices;
+
+    public static int CheckBoard(int i, int j, int k, int player, Game game) {
+        int dir1 = CheckConsecutive(i, j, k, 0, 1, -1, player, game);
+        int dir2 = CheckConsecutive(i, j, k, 1, -1, 0, player, game);
+        int dir3 = CheckConsecutive(i, j, k, 1, 0, -1, player, game);
+
+        if (dir1 >= 4 || dir2 >= 4 || dir3 >= 4) return player;
+        else if (dir1 == 3 || dir2 == 3 || dir3 == 3) return -player;
+        else if (game.Draw()) return 2;
+        else return 0;
+    }
+
+    public static int CheckConsecutive(int i, int j, int k, int dir_x, int dir_y, int dir_z, int player, Game game) {
         int num_consec = 0;
 
         int cnt_x = i;
         int cnt_y = j;
         int cnt_z = k;
 
-        while(board.ContainsKey(GenerateStringFromCoordinates(cnt_x, cnt_y, cnt_z))) {
-            if(board[GenerateStringFromCoordinates(cnt_x, cnt_y, cnt_z)] == move) {
-                num_consec++;
+        int player_id = ((player + 1) >> 1); 
 
-                cnt_x += dir_x;
-                cnt_y += dir_y;
-                cnt_z += dir_z;
-            }
-            else {
-                break;
-            }
+        while(game.board[player_id, game.CubicToIndex(cnt_x, cnt_y, cnt_z)]) {
+            num_consec++;
+
+            cnt_x += dir_x;
+            cnt_y += dir_y;
+            cnt_z += dir_z;
         }
-
+        
         cnt_x = i;
         cnt_y = j;
         cnt_z = k;
+        
+        while(game.board[player_id, game.CubicToIndex(cnt_x, cnt_y, cnt_z)]) {
+            num_consec++;
 
-        while(board.ContainsKey(GenerateStringFromCoordinates(cnt_x, cnt_y, cnt_z))) {
-            if(board[GenerateStringFromCoordinates(cnt_x, cnt_y, cnt_z)] == move) {
-                num_consec++;
-
-                cnt_x -= dir_x;
-                cnt_y -= dir_y;
-                cnt_z -= dir_z;
-            }
-            else {
-                break;
-            }
+            cnt_x -= dir_x;
+            cnt_y -= dir_y;
+            cnt_z -= dir_z;
         }
-        num_consec--;
 
-        return num_consec;        
+        num_consec--;
+        return num_consec;
     }
 
-    public int SimulateFromLeafNode(Node leaf) {
-        if(leaf.winner != 0) { return leaf.winner; } // game has ended, return results
+    public static List<int> AllPossibleMoves(Game game) {
+        List<int> possibleMoves = new List<int>();
 
-        int player = -leaf.player;
-        Dictionary<string, int> gameState = new Dictionary<string, int>(leaf.gameState);
-        System.Random rd = new System.Random();
-        List<string> possibleMoves = Board.AllPossibleMoves(gameState);
+        foreach(int idx in allPossibleIndices) {
+            if(game.board[0, idx] || game.board[1, idx]) continue;
 
-        while(true) {
-            int randomMove = rd.Next(0, possibleMoves.Count);
-            List<int> coords = Board.GenerateCoordinatesFromString(possibleMoves[randomMove]);
-            int result = PlayMove(coords[0], coords[1], coords[2], player, gameState);
-            if(result != 0) return result;         // there has been a win/loss/draw
-
-            player = -player;
-            possibleMoves.RemoveAt(randomMove);    // this move can no longer be played
+            possibleMoves.Add(idx);
         }
+
+        return possibleMoves;
     }
 }

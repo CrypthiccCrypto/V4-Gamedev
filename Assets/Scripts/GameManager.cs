@@ -12,22 +12,22 @@ public class GameManager : MonoBehaviour {
     public int board_size;
     public Dictionary<string, int> board;
     public Grid grid;
-    private Board game;
+    public Game game;
+    public const int applyMCTSLimit = 10000;
     private MCTSBestMove AI;
     [SerializeField] private int turn;
 
     void Awake() {
-        board = new Dictionary<string, int>();
-        game = new Board(board_size);
+        game = new Game(board_size);
         AI = new MCTSBestMove(board_size);
 
-        Board.allPossibleCoordinates = new HashSet<string>();
+        Board.allPossibleIndices = new HashSet<int>();
 
         for(int i = -board_size + 1; i <= board_size - 1; i++) {        // add all possible moves to the set
             for(int j = -board_size + 1; j <= board_size - 1; j++) {
                 int k = -(i + j);
                 if(Math.Abs(k) <= board_size - 1) {
-                    Board.allPossibleCoordinates.Add(Board.GenerateStringFromCoordinates(i, j, k));
+                    Board.allPossibleIndices.Add(game.CubicToIndex(i, j, k));
                 }
             }
         }
@@ -36,16 +36,17 @@ public class GameManager : MonoBehaviour {
     }
 
     public void UpdateGame(int x, int y, int z) {
-        if(board.ContainsKey(Board.GenerateStringFromCoordinates(x, y, z))) {
-                Debug.Log("Pawn already placed");
+        int idx = game.CubicToIndex(x, y, z);
+        if(game.board[0, idx] || game.board[1, idx]) {
+                Debug.Log("Don't place on the same tile");
         }
         else {
-            int result = game.PlayMove(x, y, z, turn, board);
+            game.PlayMove(x, y, z, turn);
+            int result = Board.CheckBoard(x, y, z, turn, game);
 
-            //
             // Code to display a tile on the board!
             grid.PlaceTile(x, y, z, turn);
-            //
+            
 
             if(result == (int)TURN.PLAYER_TURN) {
                 Debug.Log("Player Won!");
@@ -65,12 +66,20 @@ public class GameManager : MonoBehaviour {
         turn = -turn;
 
         if(turn == (int)TURN.AI_TURN) {
-            AI.rootNode = new Node(turn, null, board, "");
+            AI.simulator = game;
+            int[] coords = null;
 
-            AI.FindBestMove(1000);      // parameterize this later according to difficulty and board size
+            if(game.plays < applyMCTSLimit) {   // minimax logic, only logic used for now
+                AI.MiniMax(turn, true, 2, -2, 0);
+                coords = game.IndexToCubic(AI.best_minimax_move);
+            }
+            else {
+                AI.rootNode = new Node(-turn, null, -1); // since player turn has just been played
 
-            List<int> coords = Board.GenerateCoordinatesFromString(AI.bestNode.move);           // play the move in the actual game
-            Debug.Log("Computer plays: " + coords[0] + " " + coords[1] + " " + coords[2]);
+                AI.FindBestMove(10000);                 
+                coords = game.IndexToCubic(AI.bestNode.move);           // play the move in the actual game
+            }
+
             UpdateGame(coords[0], coords[1], coords[2]);
         }
     }

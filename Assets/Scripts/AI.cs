@@ -1,53 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 public class Node {
-    public Dictionary<string, int> gameState;
     public Node parent;
     public List<Node> children;
     public int player;        // current player of this node
-    public string move;       // the move to be played at this node
+    public int move;       // the move to be played at this node
     public int numVisits = 0, victory = 0, loss = 0, draw = 0;
     public double UCT = 0;
-    public int winner = 0;     // 0 if no winner, +1 or -1 otherwise 
+    public int winner = 0;     // 0 if no winner, +1, -1, 2 otherwise 
 
-    public Node(int player, Node parent, Dictionary<string, int> gameState, string move) {
+    public Node(int player, Node parent, int move) {
         this.player = player;
         this.parent = parent;
-        this.gameState = gameState;
         this.move = move;
         children = new List<Node>();
     }
 
-    // public int CompareTo(object obj) {
-    //     Node other = (Node)obj;
-
-    //     if(this.UCT >= other.UCT) { return 1; }
-    //     else { return -1; }
-    // }
-
     public void SetUCT() {
         if(numVisits == 0) UCT = Double.MaxValue;       // if a node has not been visited then explore it
-        else UCT = ((victory + draw/2) / numVisits) + Math.Sqrt(2) * Math.Sqrt(Math.Log(parent.numVisits) / numVisits);
+        else UCT = ((victory + (draw/2)) / numVisits) + Math.Sqrt(2) * Math.Sqrt(Math.Log(parent.numVisits) / numVisits);
     }
 }
 
 public class MCTSBestMove {
-    public Board simulator;
+    public Game simulator;
     public Node rootNode;
     public Node bestNode;
 
+    
+    // MINIMAX USED ONLY
+    public int max_depth = 5;
+    public int best_minimax_move;
+
     public MCTSBestMove(int boardsize) {
-        // OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER
-        simulator = new Board(boardsize);   
-        // OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER// OBTAIN ACTUAL VALUE FROM GAME MANAGER
+        simulator = new Game(boardsize);   
 
         rootNode = null;    // set later from main
         bestNode = null;    // set from findbestmove function
     }
 
-    public Node SelectNodeForRollout() {
+    // simulate 1 round
+    public Node SelectNodeForRollout() {       // selection phase
         Node currentNode = rootNode;
 
         while(true) {
@@ -56,7 +52,11 @@ public class MCTSBestMove {
             } 
             if (currentNode.children.Count == 0) {
                 GenerateChildren(currentNode);
-                return currentNode.children[0];
+                
+                currentNode = currentNode.children[0];
+                
+                int[] coords = simulator.IndexToCubic(currentNode.move);
+                simulator.PlayMove(coords[0], coords[1], coords[2], currentNode.player);
             } 
             else {
                 foreach(Node child in currentNode.children) {
@@ -64,37 +64,37 @@ public class MCTSBestMove {
                 }
                 currentNode.children.Sort((y, x) => x.UCT.CompareTo(y.UCT));
                 
-                // if(currentNode.children.Count >= 1) {
-                //     Console.WriteLine(currentNode.children[0].UCT + " " + currentNode.children[1].UCT);
-                // }
                 currentNode = currentNode.children[0];
-                if(currentNode.numVisits == 0) {
-                    return currentNode;
-                }
+                
+                int[] coords = simulator.IndexToCubic(currentNode.move);
+                simulator.PlayMove(coords[0], coords[1], coords[2], currentNode.player);
             }
         }
     }
 
     public void GenerateChildren(Node n) {     // expansion phase
-        List<string> possibleMoves = Board.AllPossibleMoves(n.gameState);
+        List<int> possibleMoves = Board.AllPossibleMoves(simulator);
         int player = -n.player;
 
-        foreach(string s in possibleMoves) {
-            List<int> coords = Board.GenerateCoordinatesFromString(s);
-
-            int result = simulator.PlayMove(coords[0], coords[1], coords[2], player, n.gameState);
+        foreach(int idx in possibleMoves) {
+            int[] coords = simulator.IndexToCubic(idx);            
+            simulator.PlayMove(coords[0], coords[1], coords[2], player);
             
-            Node child = new Node(player, n, n.gameState, s);
+            int result = Board.CheckBoard(coords[0], coords[1], coords[2], player, simulator);
+            Node child = new Node(player, n, idx);
             child.winner = result;
             n.children.Add(child);
 
-            simulator.UnplayMove(coords[0], coords[1], coords[2], n.gameState);
+            simulator.UnplayMove(coords[0], coords[1], coords[2], player);
         }
     }
 
     public void BackPropagate(Node n, int won) {
         Node cnt = n;
         while(cnt != null) {
+            int[] coords = simulator.IndexToCubic(cnt.move);
+            if (cnt != rootNode) simulator.UnplayMove(coords[0], coords[1], coords[2], cnt.player);
+            
             cnt.numVisits++;
             if(won == 2) {
                 cnt.draw++;
@@ -110,10 +110,10 @@ public class MCTSBestMove {
         }
     }
 
-    public void FindBestMove(int iterations) {     // replace with time later
+    public void FindBestMove(int iterations) {
         for(int i = 0; i < iterations; i++) {
             Node leafToSimulateFrom = SelectNodeForRollout();
-            int won = simulator.SimulateFromLeafNode(leafToSimulateFrom);
+            int won = leafToSimulateFrom.winner;
             BackPropagate(leafToSimulateFrom, won);
         }
 
@@ -124,5 +124,50 @@ public class MCTSBestMove {
                 bestNode = child;
             }
         }
+    }
+
+    public int MiniMax(int turn, bool root, int beta, int alpha, int depth) {
+        if(depth >= max_depth) { return 0; }
+        bool max_node = (turn == (int)TURN.PLAYER_TURN);    // Player is MAXNODE, AI is MINNODE
+
+        int best_score = max_node ? Int32.MinValue : Int32.MaxValue;
+
+        List<int> possibleMoves = Board.AllPossibleMoves(simulator);
+
+        foreach (int idx in possibleMoves) {
+            int[] coords = simulator.IndexToCubic(idx);
+            simulator.PlayMove(coords[0], coords[1], coords[2], turn);
+            int result = Board.CheckBoard(coords[0], coords[1], coords[2], turn, simulator);
+
+            if (result != 0) {
+                simulator.UnplayMove(coords[0], coords[1], coords[2], turn);
+
+                if (result == 2) { result = 0; }
+                else if (result == 1) {
+                    if (max_node) { return result; }
+                } else if (result == -1) {
+                    if (!max_node) {
+                        if (root) { best_minimax_move = idx; }
+                        return result;
+                    }
+                }
+            } else {
+                result = MiniMax(-turn, false, beta, alpha, depth + 1);
+                simulator.UnplayMove(coords[0], coords[1], coords[2], turn);
+            }
+
+            if (max_node && result > best_score) {
+                if (result >= beta) { return beta; }
+                best_score = result;
+                alpha = Math.Max(alpha, result);
+            } else if (!max_node && result < best_score) {
+                if (root) { best_minimax_move = idx; }
+                else if (result <= alpha) { return alpha; }
+                best_score = result;
+                beta = Math.Min(beta, result);
+            }
+        }
+
+        return best_score;
     }
 }
